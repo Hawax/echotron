@@ -175,6 +175,7 @@ func (d *Dispatcher) listen() {
 		default:
 			continue
 		}
+		limiter.Increment(chatID)
 		if limiter.Check(chatID) {
 			d.api.SendMessage("Za dużo zapytań na raz, poczekaj chwilę", chatID, nil)
 		}

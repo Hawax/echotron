@@ -142,6 +142,8 @@ func (d *Dispatcher) instance(chatID int64) Bot {
 }
 
 func (d *Dispatcher) listen() {
+	limiter := NewLimiter(d.api)
+	limiter.Init()
 	for update := range d.updates {
 		var chatID int64
 
@@ -172,6 +174,9 @@ func (d *Dispatcher) listen() {
 			chatID = update.ChatJoinRequest.Chat.ID
 		default:
 			continue
+		}
+		if limiter.Check(chatID) {
+			d.api.SendMessage("Za dużo zapytań na raz, poczekaj chwilę", chatID, nil)
 		}
 
 		bot := d.instance(chatID)

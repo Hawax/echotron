@@ -1,3 +1,3 @@
-module github.com/Hawax/echotron/v3
+module github.com/Hawax/echotron
 
 go 1.19

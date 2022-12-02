@@ -176,8 +176,13 @@ func (d *Dispatcher) listen() {
 			continue
 		}
 		limiter.Increment(chatID)
-		if limiter.Check(chatID) {
-			d.api.SendMessage("Za dużo zapytań na raz, poczekaj chwilę", chatID, nil)
+
+		if !limiter.Check(chatID) {
+			if !limiter.GetSended(chatID) {
+				go d.api.SendMessage("Za dużo zapytań, poczekaj chwilę", chatID, nil)
+			}
+			limiter.SetLimitTrue(chatID)
+			continue
 		}
 
 		bot := d.instance(chatID)
